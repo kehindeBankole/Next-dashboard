@@ -8,30 +8,29 @@
     scroll-behavior: smooth;
     @apply text-primary;
   }
-
 }
 
-
-/* :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+  .bg-\[\#599EEA\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(89 158 234 / var(--tw-bg-opacity));
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */
+  
+  .bg-\[\#844FF6\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(132 79 246 / var(--tw-bg-opacity));
+  }
+  
+  .bg-\[\#F09468\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(240 148 104 / var(--tw-bg-opacity));
+  }
+  
+  .bg-\[\#FAB70A\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(250 183 10 / var(--tw-bg-opacity));
+  }
+  
+  .bg-\[\#0FB77A\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(15 183 122 / var(--tw-bg-opacity));
+  }
