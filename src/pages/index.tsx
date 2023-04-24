@@ -45,10 +45,10 @@ export default function Home() {
         </div>
       ) : (
         <div className='space-y-[2.875rem]'>
-          <p className='font-medium text-lg'>Dashboard</p>
+          <p className='font-bold text-lg'>Dashboard</p>
           <div className='flex justify-between'>
             <div className='space-y-2'>
-              <h1 className='font-semibold text-2xl'>
+              <h1 className='font-bold text-2xl'>
                 Good morning, Blessing ⛅️
               </h1>
               <p className='text-sm'>Check out your dashboard summary.</p>
