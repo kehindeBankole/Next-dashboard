@@ -1,118 +1,184 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import Image from 'next/image';
+import AppLayout from 'components/layout/index';
+import useViews from 'data/views';
+import InfoIcon from 'assets/icons/info.svg';
+import Nigeria from 'assets/icons/nigeria.svg';
+import Germany from 'assets/icons/germany.svg';
+import Finland from 'assets/icons/finland.svg';
+import Ghana from 'assets/icons/ghana.svg';
+import UnitedKingdom from 'assets/icons/uk.svg';
+import AreaChart from 'components/charts/Area';
+import PieChart from 'components/charts/Piechart';
+import Facebook from 'assets/icons/facebook.svg';
+import Insta from 'assets/icons/insta.svg';
+import LinkedIn from 'assets/icons/linkedin.svg';
+import Google from 'assets/icons/google.svg';
+import { COLORS } from 'constants/index';
 
 export default function Home() {
+  const { data, isLoading, isError } = useViews();
+
+  const icons: Record<string, any> = {
+    Nigeria,
+    Germany,
+    Finland,
+    Ghana,
+    'United Kingdom': UnitedKingdom,
+    facebook: Facebook,
+    instagram: Insta,
+    linkedin: LinkedIn,
+    google: Google,
+  };
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <AppLayout>
+      {isLoading ? (
+        <div className='grid place-items-center h-screen'>
+          <span className='relative flex h-10 w-10'>
+            <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75'></span>
+            <span className='relative inline-flex rounded-full h-10 w-10 bg-sky-500'></span>
+          </span>
         </div>
-      </div>
+      ) : isError ? (
+        <div className='grid place-items-center h-screen'>
+          <p>Error fetching data , please reload and try again</p>
+        </div>
+      ) : (
+        <div className='space-y-[2.875rem]'>
+          <p className='font-medium text-lg'>Dashboard</p>
+          <div className='flex justify-between'>
+            <div className='space-y-2'>
+              <h1 className='font-semibold text-2xl'>
+                Good morning, Blessing ⛅️
+              </h1>
+              <p className='text-sm'>Check out your dashboard summary.</p>
+            </div>
+            <button className='text-orange text-sm'>View analytics</button>
+          </div>
+          <div className='space-x-3'>
+            {data &&
+              [...new Set(Object.values(data?.graph_data?.views))]
+                .sort((a, b) => a - b)
+                .map((item, index) => (
+                  <button
+                    key={index}
+                    className={`${
+                      item === 50
+                        ? 'border-orange bg-orange-light text-orange'
+                        : 'border-primary text-dark-gray'
+                    } border text-sm  font-medium py-3 px-4 rounded-full`}
+                  >
+                    {item} {item === 1 ? 'Day' : 'Days'}
+                  </button>
+                ))}
+          </div>
+          <div className='border border-primary p-4 rounded-2xl'>
+            <div className='flex justify-between items-center'>
+              <p className='text-lg font-medium'>Page Views</p>
+              <button>
+                <Image
+                  src={InfoIcon}
+                  alt='Picture of the author'
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+            <p className='mt-2 text-sm text-dark-gray'>All time</p>
+            <h3 className='font-medium text-5xl mt-6'>
+              {data &&
+                Object.values(data?.graph_data.views).reduce(
+                  (sum, item) => (item += sum),
+                  0
+                )}
+            </h3>
+            {data && (
+              <AreaChart
+                series={Object.values(data?.graph_data.views)}
+                categories={Object.keys(data?.graph_data.views).map((item) => {
+                  return new Intl.DateTimeFormat('en-US', {
+                    day: '2-digit',
+                    month: 'short',
+                  }).format(new Date(item));
+                })}
+              />
+            )}
+          </div>
+          <div className='grid grid-cols-2 space-x-10'>
+            <div className='border border-primary p-4 rounded-2xl'>
+              <div className='flex justify-between items-center'>
+                <p className='font-medium text-lg mt-6'>Top Locations</p>
+                <button className='text-orange text-sm'>
+                  View full reports
+                </button>
+              </div>
+              <div className='flex items-center justify-between mt-4'>
+                <div className='space-y-4'>
+                  {data?.top_locations.map((item, index) => (
+                    <div key={index} className='flex items-center space-x-2'>
+                      <Image
+                        src={icons[`${item.country}`]}
+                        width={21}
+                        height={15}
+                        alt='country icon'
+                      />
+                      <p>
+                        {`${item.country}`}{' '}
+                        <span className='font-medium'>{item.percent}%</span>
+                      </p>
+                      <div
+                        className={`w-3 h-3 bg-[${COLORS[index]}] rounded-full`}
+                      ></div>
+                    </div>
+                  ))}
+                </div>
+                {data && (
+                  <PieChart
+                    series={data?.top_locations.map((item) => item.percent)}
+                    labels={data?.top_locations.map((item) => item.country)}
+                  />
+                )}
+              </div>
+            </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+            <div className='border border-primary p-4 rounded-2xl'>
+              <div className='flex justify-between items-center capitalize'>
+                <p className='font-medium text-lg mt-6'>Top Referral source</p>
+                <button className='text-orange text-sm'>
+                  View full reports
+                </button>
+              </div>
+              <div className='flex items-center justify-between capitalize mt-4'>
+                <div className='space-y-4'>
+                  {data?.top_sources.map((item, index) => (
+                    <div key={index} className='flex items-center space-x-2'>
+                      <Image
+                        src={icons[`${item.source}`]}
+                        width={21}
+                        height={15}
+                        alt='country icon'
+                      />
+                      <p>
+                        {`${item.source}`}{' '}
+                        <span className='font-medium'>{item.percent}%</span>
+                      </p>
+                      <div
+                        className={`w-3 h-3 bg-[${COLORS[index]}] rounded-full`}
+                      ></div>
+                    </div>
+                  ))}
+                </div>
+                {data && (
+                  <PieChart
+                    series={data?.top_sources.map((item) => item.percent)}
+                    labels={data?.top_sources.map((item) => item.source)}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </AppLayout>
+  );
 }
