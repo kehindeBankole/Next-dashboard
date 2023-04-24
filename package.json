@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"yarn tailwind\" \"next dev\"",
     "tailwind": "npx tailwindcss -i ./src/styles/globals.css -o ./src/styles/tailwind.css --watch",
-    "build": "next build",
+    "build": "npx tailwindcss -i ./src/styles/globals.css -o ./src/styles/tailwind.css && next build",
     "start": "next start",
     "lint": "next lint"
   },
