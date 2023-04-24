@@ -107,7 +107,14 @@ export default function AppLayout(props: { children: ReactElement }) {
   );
 }
 
-function Nav(props: { item: any }) {
+function Nav(props: {
+  item: {
+    icon?: string;
+    name: string;
+    route?: string;
+    children?: { icon: string; name: string; route?: string }[];
+  };
+}) {
   const { item } = props;
   const router = useRouter();
 
